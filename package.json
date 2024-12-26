@@ -40,8 +40,7 @@
     "rotating-file-stream": "^3.2.5",
     "sanitize-html": "^2.13.1",
     "stripe": "^17.0.0",
-    "uuid": "^11.0.2",
-    "web3": "^4.13.0"
+    "uuid": "^11.0.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
