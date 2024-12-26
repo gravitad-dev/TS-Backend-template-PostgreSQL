@@ -1,0 +1,49 @@
+# Node modules and build directories
+node_modules/
+dist/
+build/
+
+# Logs
+*.log
+*.log.txt
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Package managers
+.npm
+
+# Editor and OS-specific files
+.eslintcache
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Test and temporary files
+coverage/
+tmp/
+temp/
+
+# Lock files
+yarn.lock
+package-lock.json
+
+# Public images (excluding uploads)
+public/images/*.*
+
+# Include the uploads folder, but ignore its contents
+uploads/*
+!uploads/.gitkeep
