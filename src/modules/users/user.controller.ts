@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { userService } from './user.service';
-import { cartService } from '../carts/cart.service';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { sendEmail } from '../emails/email.service';
@@ -27,16 +26,9 @@ export const userController = {
 
       await sendEmail(user.email, 'Verification Code', emailContent);
 
-      const newCart = await cartService.createCart({
-        userId: user.id,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      });
-
       res.status(201).json({
         message: 'User created successfully. Please verify your email.',
         user: excludePassword(user),
-        cart: newCart,
       });
     } catch (error: any) {
       if (error.message.includes('Email already exists')) {
@@ -45,7 +37,7 @@ export const userController = {
       } else if (error.message.includes('Username already exists')) {
         res.status(400).json({ message: 'User with this username already exists' });
         return;
-      }
+      } 
       next(error);
     }
   },

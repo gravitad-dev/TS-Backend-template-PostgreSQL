@@ -1,96 +1,92 @@
-import PDFDocument from 'pdfkit';
-import { orderService } from '../modules/orders/order.service';
-import { Order, OrderProduct, User, Buyer, Product, Payment } from '@prisma/client';
+// import PDFDocument from 'pdfkit';
 
-interface ExtendedOrder extends Order {
-  user: User;
-  buyer: Buyer;
-  orderProducts: Array<
-    OrderProduct & {
-      product: Product;
-    }
-  >;
-  payment: Payment | null;
-}
+// import { Order, OrderProduct, User, Buyer, Product, Payment } from '@prisma/client';
 
-export async function generateInvoicePDF(orderId: number): Promise<PDFKit.PDFDocument> {
-  try {
-    const order: ExtendedOrder | null = await orderService.getOrderById(orderId);
-    if (!order) {
-      throw new Error('Order not found');
-    }
+// interface ExtendedOrder extends Order {
+//   user: User;
+//   buyer: Buyer;
+//   orderProducts: Array<
+//     OrderProduct & {
+//       product: Product;
+//     }
+//   >;
+//   payment: Payment | null;
+// }
 
-    const doc = new PDFDocument({ margin: 50 });
+// export async function generateInvoicePDF(orderId: number): Promise<PDFKit.PDFDocument> {
+//   try {
 
-    // Header
-    doc.fontSize(20).text('FACTURA', { align: 'center' });
-    doc.moveDown();
+//     const doc = new PDFDocument({ margin: 50 });
 
-    // Company Info
-    doc.fontSize(10).text('Tu Empresa S.A.', { align: 'right' });
-    doc.text('Calle Ejemplo 123', { align: 'right' });
-    doc.text('Ciudad, País', { align: 'right' });
-    doc.text('info@tuempresa.com', { align: 'right' });
-    doc.moveDown();
+//     // Header
+//     doc.fontSize(20).text('FACTURA', { align: 'center' });
+//     doc.moveDown();
 
-    // Invoice Details
-    doc.fontSize(12).text(`Factura #: ${order.id}`);
-    doc.text(`Fecha: ${order.createdAt.toLocaleDateString()}`);
-    doc.text(`Estado: ${order.status}`);
-    doc.moveDown();
+//     // Company Info
+//     doc.fontSize(10).text('Tu Empresa S.A.', { align: 'right' });
+//     doc.text('Calle Ejemplo 123', { align: 'right' });
+//     doc.text('Ciudad, País', { align: 'right' });
+//     doc.text('info@tuempresa.com', { align: 'right' });
+//     doc.moveDown();
 
-    // Customer Info
-    doc.fontSize(12).text('Información del Cliente:');
-    doc.fontSize(10).text(`Nombre: ${order.buyer.name}`);
-    doc.text(`Email: ${order.buyer.email || 'N/A'}`);
-    doc.text(`Dirección: ${order.buyer.addressBuyer || 'N/A'}`);
-    doc.text(`Teléfono: ${order.buyer.phoneNumber || 'N/A'}`);
-    doc.moveDown();
+//     // Invoice Details
+//     doc.fontSize(12).text(`Factura #: ${order.id}`);
+//     doc.text(`Fecha: ${order.createdAt.toLocaleDateString()}`);
+//     doc.text(`Estado: ${order.status}`);
+//     doc.moveDown();
 
-    // Table Header
-    const tableTop = doc.y;
-    doc.font('Helvetica-Bold');
-    doc.text('Producto', 50, tableTop);
-    doc.text('Cantidad', 200, tableTop);
-    doc.text('Precio', 300, tableTop);
-    doc.text('Total', 400, tableTop);
+//     // Customer Info
+//     doc.fontSize(12).text('Información del Cliente:');
+//     doc.fontSize(10).text(`Nombre: ${order.buyer.name}`);
+//     doc.text(`Email: ${order.buyer.email || 'N/A'}`);
+//     doc.text(`Dirección: ${order.buyer.addressBuyer || 'N/A'}`);
+//     doc.text(`Teléfono: ${order.buyer.phoneNumber || 'N/A'}`);
+//     doc.moveDown();
 
-    // Table Rows
-    let y = tableTop + 25; // Start below the header
-    doc.font('Helvetica');
-    order.orderProducts.forEach((item) => {
-      doc.text(item.product.name, 50, y);
-      doc.text(item.quantity.toString(), 200, y);
-      doc.text(`$${item.product.regularPrice.toFixed(2)}`, 300, y);
-      doc.text(`$${(item.quantity * item.product.regularPrice).toFixed(2)}`, 400, y);
-      y += 25; // Move down for the next row
-    });
+//     // Table Header
+//     const tableTop = doc.y;
+//     doc.font('Helvetica-Bold');
+//     doc.text('Producto', 50, tableTop);
+//     doc.text('Cantidad', 200, tableTop);
+//     doc.text('Precio', 300, tableTop);
+//     doc.text('Total', 400, tableTop);
 
-    // Ensure there's space for totals
-    doc.moveDown(2); // Adds extra space before showing totals
-    doc.font('Helvetica-Bold');
-    doc.text(`Subtotal: $${order.totalAmount.toFixed(2)}`, { align: 'right' });
-    doc.text(`IVA (21%): $${(order.totalAmount * 0.21).toFixed(2)}`, { align: 'right' });
-    doc.text(`Total: $${(order.totalAmount * 1.21).toFixed(2)}`, { align: 'right' });
+//     // Table Rows
+//     let y = tableTop + 25; // Start below the header
+//     doc.font('Helvetica');
+//     order.orderProducts.forEach((item) => {
+//       doc.text(item.product.name, 50, y);
+//       doc.text(item.quantity.toString(), 200, y);
+//       doc.text(`$${item.product.regularPrice.toFixed(2)}`, 300, y);
+//       doc.text(`$${(item.quantity * item.product.regularPrice).toFixed(2)}`, 400, y);
+//       y += 25; // Move down for the next row
+//     });
 
-    // Payment Info
-    doc.moveDown();
-    doc.fontSize(10).text('Información de Pago:');
-    doc.text(`Método de Pago: ${order.paymentType}`);
-    if (order.payment) {
-      doc.text(`ID de Transacción: ${order.payment.stripeId || order.payment.transactionHash || 'N/A'}`);
-      doc.text(`Estado del Pago: ${order.payment.status || 'N/A'}`);
-    }
+//     // Ensure there's space for totals
+//     doc.moveDown(2); // Adds extra space before showing totals
+//     doc.font('Helvetica-Bold');
+//     doc.text(`Subtotal: $${order.totalAmount.toFixed(2)}`, { align: 'right' });
+//     doc.text(`IVA (21%): $${(order.totalAmount * 0.21).toFixed(2)}`, { align: 'right' });
+//     doc.text(`Total: $${(order.totalAmount * 1.21).toFixed(2)}`, { align: 'right' });
 
-    // Footer
-    doc.fontSize(10).text('Gracias por su compra', 50, 700, { align: 'center', width: 500 });
+//     // Payment Info
+//     doc.moveDown();
+//     doc.fontSize(10).text('Información de Pago:');
+//     doc.text(`Método de Pago: ${order.paymentType}`);
+//     if (order.payment) {
+//       doc.text(`ID de Transacción: ${order.payment.stripeId || order.payment.transactionHash || 'N/A'}`);
+//       doc.text(`Estado del Pago: ${order.payment.status || 'N/A'}`);
+//     }
 
-    // Finalize the PDF and end the stream
-    doc.end();
+//     // Footer
+//     doc.fontSize(10).text('Gracias por su compra', 50, 700, { align: 'center', width: 500 });
 
-    return doc;
-  } catch (error) {
-    console.error('Error generating invoice:', error);
-    throw error;
-  }
-}
+//     // Finalize the PDF and end the stream
+//     doc.end();
+
+//     return doc;
+//   } catch (error) {
+//     console.error('Error generating invoice:', error);
+//     throw error;
+//   }
+// }
